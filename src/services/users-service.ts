@@ -30,3 +30,25 @@ export async function loginUser(email: string, password: string): Promise<string
   await db.insert(sessions).values({ token, userId: user.id });
   return token;
 }
+
+export async function getCurrentUser(token: string) {
+  const result = await db.select().from(sessions).where(eq(sessions.token, token)).limit(1);
+  const session = result[0];
+  if (!session) {
+    throw new Error("Unauthorized");
+  }
+
+  const userResult = await db.select({
+    id: users.id,
+    name: users.name,
+    email: users.email,
+    createdAt: users.createdAt,
+  }).from(users).where(eq(users.id, session.userId)).limit(1);
+
+  const user = userResult[0];
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+
+  return user;
+}

@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "bun run --env-file=.env --watch src/index.ts",
     "db:generate": "bun --env-file=.env drizzle-kit generate",
-    "db:migrate": "bun --env-file=.env drizzle-kit migrate"
+    "db:migrate": "bun --env-file=.env drizzle-kit migrate",
+    "test": "bun test --env-file=.env"
   },
   "type": "module",
   "private": true,

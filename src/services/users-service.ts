@@ -5,6 +5,16 @@ import { db } from "../db";
 import { users, sessions } from "../db/schema";
 
 export async function registerUser(name: string, email: string, password: string): Promise<void> {
+  if (name.length > 255) {
+    throw new Error("Name maksimal 255 karakter");
+  }
+  if (email.length > 255) {
+    throw new Error("Email maksimal 255 karakter");
+  }
+  if (!password) {
+    throw new Error("Password tidak boleh kosong");
+  }
+
   const existing = await db.select().from(users).where(eq(users.email, email)).limit(1);
   if (existing.length > 0) {
     throw new Error("Email sudah terdaftar");

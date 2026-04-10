@@ -1,6 +1,13 @@
 import { Elysia, t } from "elysia";
 import { registerUser, loginUser, getCurrentUser, logoutUser } from "../services/users-service";
 
+const knownRegistrationErrors = [
+  "Email sudah terdaftar",
+  "Name maksimal 255 karakter",
+  "Email maksimal 255 karakter",
+  "Password tidak boleh kosong",
+];
+
 function extractToken(authorization: string | undefined): string | null {
   if (!authorization || !authorization.startsWith("Bearer ")) return null;
   return authorization.slice(7);
@@ -15,7 +22,8 @@ export const usersRoute = new Elysia()
         return { data: "OK" };
       } catch (error) {
         set.status = 400;
-        return { error: (error as Error).message };
+        const message = (error as Error).message;
+        return { error: knownRegistrationErrors.includes(message) ? message : "Registrasi gagal" };
       }
     },
     {

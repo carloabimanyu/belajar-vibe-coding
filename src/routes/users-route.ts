@@ -32,6 +32,10 @@ export const usersRoute = new Elysia()
         email: t.String(),
         password: t.String(),
       }),
+      response: {
+        200: t.Object({ data: t.String() }),
+        400: t.Object({ error: t.String() }),
+      },
       detail: {
         summary: "Register User",
         description: "Registrasi user baru. Password akan di-hash menggunakan bcrypt.",
@@ -55,6 +59,10 @@ export const usersRoute = new Elysia()
         email: t.String(),
         password: t.String(),
       }),
+      response: {
+        200: t.Object({ data: t.String({ description: "Session token UUID" }) }),
+        400: t.Object({ error: t.String() }),
+      },
       detail: {
         summary: "Login User",
         description: "Login user dan mendapatkan session token UUID.",
@@ -77,6 +85,17 @@ export const usersRoute = new Elysia()
       return { error: "Unauthorized" };
     }
   }, {
+    response: {
+      200: t.Object({
+        data: t.Object({
+          id: t.Number(),
+          name: t.String(),
+          email: t.String(),
+          createdAt: t.Date(),
+        }),
+      }),
+      401: t.Object({ error: t.String() }),
+    },
     detail: {
       summary: "Get Current User",
       description: "Mendapatkan data user yang sedang login berdasarkan token.",
@@ -98,6 +117,10 @@ export const usersRoute = new Elysia()
       return { error: "Unauthorized" };
     }
   }, {
+    response: {
+      200: t.Object({ data: t.String() }),
+      401: t.Object({ error: t.String() }),
+    },
     detail: {
       summary: "Logout User",
       description: "Logout user dan menghapus session dari database.",

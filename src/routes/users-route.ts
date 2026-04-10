@@ -32,6 +32,11 @@ export const usersRoute = new Elysia()
         email: t.String(),
         password: t.String(),
       }),
+      detail: {
+        summary: "Register User",
+        description: "Registrasi user baru. Password akan di-hash menggunakan bcrypt.",
+        tags: ["Users"],
+      },
     }
   )
   .post(
@@ -50,6 +55,11 @@ export const usersRoute = new Elysia()
         email: t.String(),
         password: t.String(),
       }),
+      detail: {
+        summary: "Login User",
+        description: "Login user dan mendapatkan session token UUID.",
+        tags: ["Users"],
+      },
     }
   )
   .get("/api/users/current", async ({ headers, set }) => {
@@ -66,6 +76,12 @@ export const usersRoute = new Elysia()
       set.status = 401;
       return { error: "Unauthorized" };
     }
+  }, {
+    detail: {
+      summary: "Get Current User",
+      description: "Mendapatkan data user yang sedang login berdasarkan token.",
+      tags: ["Users"],
+    },
   })
   .delete("/api/users/logout", async ({ headers, set }) => {
     const token = extractToken(headers["authorization"]);
@@ -81,4 +97,10 @@ export const usersRoute = new Elysia()
       set.status = 401;
       return { error: "Unauthorized" };
     }
+  }, {
+    detail: {
+      summary: "Logout User",
+      description: "Logout user dan menghapus session dari database.",
+      tags: ["Users"],
+    },
   });

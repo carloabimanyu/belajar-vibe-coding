@@ -4,6 +4,10 @@ import { eq } from "drizzle-orm";
 import { db } from "../db";
 import { users, sessions } from "../db/schema";
 
+/**
+ * Registrasi user baru. Melakukan validasi input (panjang name, email, password kosong),
+ * mengecek duplikasi email, lalu menyimpan user dengan password yang sudah di-hash bcrypt.
+ */
 export async function registerUser(name: string, email: string, password: string): Promise<void> {
   if (name.length > 255) {
     throw new Error("Name maksimal 255 karakter");
@@ -24,6 +28,10 @@ export async function registerUser(name: string, email: string, password: string
   await db.insert(users).values({ name, email, password: hashedPassword });
 }
 
+/**
+ * Login user berdasarkan email dan password. Memverifikasi kredensial menggunakan bcrypt,
+ * lalu membuat session baru dengan token UUID dan mengembalikan token tersebut.
+ */
 export async function loginUser(email: string, password: string): Promise<string> {
   const result = await db.select().from(users).where(eq(users.email, email)).limit(1);
   const user = result[0];
@@ -41,6 +49,10 @@ export async function loginUser(email: string, password: string): Promise<string
   return token;
 }
 
+/**
+ * Mengambil data user yang sedang login berdasarkan session token.
+ * Mengembalikan id, name, email, dan createdAt (tanpa password).
+ */
 export async function getCurrentUser(token: string) {
   const result = await db.select().from(sessions).where(eq(sessions.token, token)).limit(1);
   const session = result[0];
@@ -63,6 +75,10 @@ export async function getCurrentUser(token: string) {
   return user;
 }
 
+/**
+ * Logout user dengan menghapus session berdasarkan token dari database.
+ * Jika token tidak ditemukan, throw error Unauthorized.
+ */
 export async function logoutUser(token: string): Promise<void> {
   const result = await db.delete(sessions).where(eq(sessions.token, token));
   if (result[0].affectedRows === 0) {
